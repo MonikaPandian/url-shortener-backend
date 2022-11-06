@@ -5,7 +5,7 @@ import UrlModel from "../models/urlModel.js";
 
 const router = express.Router()
 
-const baseUrl = 'http://localhost:9005'
+const baseUrl = 'https://url-shortener-110.herokuapp.com'
 
 router.post('/shorten', async(req, res)=>{
     const {longUrl} = req.body;
