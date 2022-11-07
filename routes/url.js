@@ -7,9 +7,30 @@ const router = express.Router()
 
 const baseUrl = 'https://url-shortener-110.herokuapp.com'
 
+router.get('/', async(req, res)=>{
+    try {
+        const result = await UrlModel.find({})
+        res.send(result)
+    }
+    catch (error) {
+        res.status(500).json(error)
+    }
+})
+
+router.get('/today', async(req, res)=>{
+  
+    try {
+        const result = await UrlModel.find({})
+        res.send(result)
+    }
+    catch (error) {
+        res.status(500).json(error)
+    }
+})
+
 router.post('/shorten', async(req, res)=>{
     const {longUrl} = req.body;
-
+  
     if(!validUrl.isUri(baseUrl)){
         return res.status(401).json('Invalid base URL')
     }
@@ -22,7 +43,7 @@ router.post('/shorten', async(req, res)=>{
             let url = await UrlModel.findOne({longUrl})
 
             if(url) {
-                res.json(url)
+                res.send({message:"success", shortUrl : url.shortUrl})
             } else{
                 const shortUrl = baseUrl + '/' + urlCode
 
@@ -33,7 +54,7 @@ router.post('/shorten', async(req, res)=>{
                     date: new Date()
                 })
                 await url.save()
-                res.json(url)
+                res.send({message:"success", shortUrl : url.shortUrl})
             }
         }
         catch(err){
