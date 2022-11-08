@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import RedirectRoute from "./routes/redirect.js"
 import UrlRoute from "./routes/url.js"
+import {userRouter} from "./routes/users.js"
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
@@ -23,4 +24,5 @@ app.use(express.json({
 
 app.use('/', RedirectRoute)
 app.use('/api/url', UrlRoute)
+app.use('/users',userRouter)
 
