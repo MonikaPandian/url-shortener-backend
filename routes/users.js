@@ -1,16 +1,12 @@
 import express from "express";
-import validUrl from "valid-url"
-import shortid from "shortid";
+
 import UserModel from "../models/userModel.js";
-import mongoose, { Mongoose } from "mongoose";
+import  { Mongoose } from "mongoose";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import NodeMailer from 'nodemailer';
-import { ObjectId, ObjectID } from "bson";
 
 const router = express.Router()
-
-const baseUrl = 'https://url-shortener-110.herokuapp.com'
 
 router.get('/get', async (req, res) => {
     const date = Mongoose.date
