@@ -136,7 +136,7 @@ router.post('/login', async (req, res) => {
 
             //User exist and now create a one time link valid for 15 minutes
             const token = jwt.sign(payload, secret, { expiresIn: '15m' });
-            const link = `https://url-shortener-frontend-a1d3c9.netlify.app//register/verify/${isUserExist._id}/${token}`;
+            const link = `https://url-shortener-frontend-a1d3c9.netlify.app/register/verify/${isUserExist._id}/${token}`;
             var transporter = NodeMailer.createTransport({
                 service: 'gmail',
                 auth: {
