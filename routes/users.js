@@ -70,7 +70,7 @@ router.post('/signup', async (req, res) => {
             html: `<div>
             <h1>Email Confirmation</h1>
             <h2>Hello ${newUser.firstName}</h2>
-            <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+            <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
             <a href=${link}>Click here</a>
             </div>`,
         };
