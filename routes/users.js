@@ -93,13 +93,12 @@ router.post('/signup', async (req, res) => {
 router.post('/signup/verify-account/:id/:token', async (req, res) => {
     const { id, token } = req.params;
 
-    try {
-        const isUserExist = await UserModel.findOne({ _id: id })
+    const isUserExist = await UserModel.findOne({ _id: id })
 
         if (!isUserExist) {
             return res.status(400).json({ message: "User not exists" })
         }
-        
+
         const secret = process.env.SECRET_KEY + isUserExist.password;
 
         try {
@@ -110,11 +109,6 @@ router.post('/signup/verify-account/:id/:token', async (req, res) => {
         catch (error) {
             res.status(500).json({ message: "Token expired" })
         }
-    }
-    catch (error) {
-        res.status(500).json("Server error")
-    }
-
 })
 
 router.post('/login', async (req, res) => {
@@ -126,7 +120,6 @@ router.post('/login', async (req, res) => {
         return res.status(400).json({ message: "user not exists!!!" })
     }
 
-    try {
         //check whether the account is active      
         if (isUserExist.status !== "active") {
             const secret = process.env.SECRET_KEY + isUserExist.password
@@ -166,11 +159,7 @@ router.post('/login', async (req, res) => {
             })
             return res.send({ message: "Account is not activated. Email sent successfully" })
         }
-    }
-    catch (error) {
-        res.status(500).json("Internal server error")
-    }
-
+       
     const storedPassword = isUserExist.password
     const isPasswordMatch = await bcrypt.compare(password, storedPassword)
 
@@ -180,7 +169,6 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign({ id: isUserExist._id }, process.env.SECRET_KEY)
     res.send({ message: "Successful login", token: token, username: username, id: isUserExist._id })
-
 })
 
 //forgot-password send-email
@@ -237,7 +225,6 @@ router.post("/forgot-password", async (req, res) => {
 })
 
 //reset password
-
 router.post("/reset-password/:id/:token", async (req, res) => {
     const { id, token } = req.params;
     const { password } = req.body;
