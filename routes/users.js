@@ -63,7 +63,7 @@ router.post('/signup', async (req, res) => {
             }
         });
         var mailOptions = {
-            from: 'panmonikmm@gmail.com',
+            from: 'no-reply@gmail.com',
             to: `${newUser.username}`,
             subject: "Please confirm your account",
             html: `<div>
@@ -236,6 +236,7 @@ router.post("/forgot-password", async (req, res) => {
 })
 
 //reset password
+
 router.post("/reset-password/:id/:token", async (req, res) => {
     const { id, token } = req.params;
     const { password } = req.body;
