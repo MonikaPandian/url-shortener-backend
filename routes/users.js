@@ -200,7 +200,7 @@ router.post("/forgot-password", async (req, res) => {
         service: 'gmail',
         auth: {
             user: 'noreply9745@gmail.com',
-            pass: 'nrgyzvmtmcrxmpik'
+            pass: process.env.EMAIL_APP_PASSWORD
         }
     });
 
