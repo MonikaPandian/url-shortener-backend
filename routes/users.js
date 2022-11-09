@@ -81,7 +81,7 @@ router.post('/signup', async (req, res) => {
                 console.log('Email sent:' + info.response);
             }
         })
-        res.send({ message: "Email sent successfully" })
+        res.status(200).send({ message: "Email sent successfully" })
     }
     catch (error) {
         res.status(500).json(error)
