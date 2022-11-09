@@ -32,13 +32,14 @@ router.get('/today', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
     const { username, firstName, lastName, password } = req.body;
-    try {
-        const isUserExist = await UserModel.findOne({ username: username })
+
+    const isUserExist = await UserModel.findOne({ username: username })
 
         if (isUserExist) {
             return res.status(400).json({ message: "username is already registered" })
         }
 
+    try {        
         const salt = await bcrypt.genSalt(10); //bcrypt.gensalt(no of rounds)
 
         const hashedPassword = await bcrypt.hash(password, salt);
