@@ -236,47 +236,27 @@ router.post("/forgot-password", async (req, res) => {
 })
 
 //reset password
-router.get("/reset-password/:id/:token", async (request, response) => {
-    const { id, token } = request.params;
-    //check if this id exist in database
-    const userFromDB = await client.db("inventoryBilling").collection("users").findOne({ _id: ObjectId(id) })
-    if (!userFromDB) {
-        response.status(400).send({ message: "User not exists!!" })
-        return;
-    }
-    const secret = process.env.SECRET_KEY + userFromDB.password;
-    try {
-        const verify = jwt.verify(token, secret)
-        response.send("Verified")
-    }
-    catch (error) {
-        response.send("Not Verified")
-    }
-}
-)
-
-router.post("/reset-password/:id/:token", async (request, response) => {
-    const { id, token } = request.params;
-    const { password } = request.body;
+router.post("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
 
     //check if this id exist in database
-    const userFromDB = await client.db("inventoryBilling").collection("users").findOne({ _id: ObjectId(id) })
+    const userFromDB = await UserModel.findOne({ _id: id })
   
     if (!userFromDB) {
-        response.status(400).send({ message: "User not exists!!" })
+        res.status(400).send({ message: "User not exists!!" })
         return;
     }
     const secret = process.env.SECRET_KEY + userFromDB.password;
     try {
         const verify = jwt.verify(token, secret)
-        console.log(verify)
         const salt = await bcrypt.genSalt(10);
         const encryptedPassword = await bcrypt.hash(password, salt)
-        const updatePassword = await client.db("inventoryBilling").collection("users").updateOne({ _id: ObjectId(id) }, { $set: { password: encryptedPassword } })
-        response.send({ message: "Password updated" })
+        await UserModel.updateOne({ password: encryptedPassword })
+        res.status(200).send({ message: "Password updated" })
     }
     catch (error) {
-        response.send({ message: "Token expired" })
+        res.status(400).send({ message: "Token expired" })
 
     }
 })
