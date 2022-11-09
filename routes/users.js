@@ -168,7 +168,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign({ id: isUserExist._id }, process.env.SECRET_KEY)
-    res.send({ message: "Successful login", token: token, username: username, id: isUserExist._id })
+    res.send({ message: "Successful login", token: token, username: username, id: isUserExist._id, firstName: isUserExist.firstName, lastName: isUserExist.lastName })
 })
 
 //forgot-password send-email
