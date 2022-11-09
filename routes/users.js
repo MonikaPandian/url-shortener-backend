@@ -60,7 +60,7 @@ router.post('/signup', async (req, res) => {
             service: 'gmail',
             auth: {
                 user: 'noreply9745@gmail.com',
-                pass: 'nrgyzvmtmcrxmpik'
+                pass: process.env.EMAIL_APP_PASSWORD
             }
         });
         var mailOptions = {
@@ -135,7 +135,7 @@ router.post('/login', async (req, res) => {
                 service: 'gmail',
                 auth: {
                     user: 'noreply9745@gmail.com',
-                    pass: 'nrgyzvmtmcrxmpik'
+                    pass: process.env.EMAIL_APP_PASSWORD
                 }
             });
             var mailOptions = {
