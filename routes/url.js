@@ -11,6 +11,8 @@ const current = new Date()
 const today = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
 const nextDay = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate() + 1}`;
 
+const firstDay = `${current.getFullYear()}-${current.getMonth() + 1}-1`;
+const lastDay = `${current.getFullYear()}-${current.getMonth() + 1}-31`;
 
 router.get('/', async(req, res)=>{
     try {
@@ -29,6 +31,22 @@ router.get('/today', async (req, res) => {
                 date: {
                     $gte: new Date(today),
                     $lt: new Date(nextDay)
+                }
+            }).countDocuments()).toString()
+        res.status(200).send(result)
+    }
+    catch (error) {
+        res.status(500).json(error)
+    }
+})
+
+router.get('/month', async (req, res) => {
+    try {
+        const result = (await UrlModel.find(
+            {
+                date: {
+                    $gte: new Date(firstDay),
+                    $lt: new Date(lastDay)
                 }
             }).countDocuments()).toString()
         res.status(200).send(result)

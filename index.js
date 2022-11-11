@@ -22,7 +22,8 @@ app.use(express.json({
     extended: false
 }))
 
-
+const current = new Date()
+console.log(current.getMonth())
 app.use('/', RedirectRoute)
 app.use('/api/url', UrlRoute)
 app.use('/users',userRouter)
