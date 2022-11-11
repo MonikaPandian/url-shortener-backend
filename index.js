@@ -22,6 +22,7 @@ app.use(express.json({
     extended: false
 }))
 
+
 app.use('/', RedirectRoute)
 app.use('/api/url', UrlRoute)
 app.use('/users',userRouter)

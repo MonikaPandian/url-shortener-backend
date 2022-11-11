@@ -7,6 +7,11 @@ const router = express.Router()
 
 const baseUrl = 'https://url-shortener-110.herokuapp.com'
 
+const current = new Date()
+const today = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
+const nextDay = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate() + 1}`;
+
+
 router.get('/', async(req, res)=>{
     try {
         const result = await UrlModel.find({})
@@ -17,11 +22,16 @@ router.get('/', async(req, res)=>{
     }
 })
 
-router.get('/today', async(req, res)=>{
-  
+router.get('/today', async (req, res) => {
     try {
-        const result = await UrlModel.find({})
-        res.send(result)
+        const result = (await UrlModel.find(
+            {
+                date: {
+                    $gte: new Date(today),
+                    $lt: new Date(nextDay)
+                }
+            }).countDocuments()).toString()
+        res.status(200).send(result)
     }
     catch (error) {
         res.status(500).json(error)
@@ -51,7 +61,7 @@ router.post('/shorten', async(req, res)=>{
                     longUrl,
                     shortUrl,
                     urlCode,
-                    date: new Date()
+                    date : new Date()
                 })
                 await url.save()
                 res.send({message:"success", shortUrl : url.shortUrl})
