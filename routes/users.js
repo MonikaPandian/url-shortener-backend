@@ -36,7 +36,7 @@ router.post('/signup', async (req, res) => {
         var transporter = NodeMailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'noreply9745@gmail.com',
+                user: 'panmonikmm@gmail.com',
                 pass: process.env.EMAIL_APP_PASSWORD
             }
         });
