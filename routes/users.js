@@ -3,7 +3,6 @@ import UserModel from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import NodeMailer from 'nodemailer';
-import UrlModel from "../models/urlModel.js";
 
 const router = express.Router()
 
