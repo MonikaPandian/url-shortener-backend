@@ -3,6 +3,7 @@ import UserModel from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import NodeMailer from 'nodemailer';
+import sgMail from "@sendgrid/mail";
 
 const router = express.Router()
 
@@ -32,38 +33,28 @@ router.post('/signup', async (req, res) => {
         //User exist and now create a one time link valid for 15 minutes
         const token = jwt.sign(payload, secret, { expiresIn: '15m' });
         const link = `https://url-shortener-frontend-a1d3c9.netlify.app/register/verify/${newUser._id}/${token}`;
-        var transporter = NodeMailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'noreply9745@gmail.com',
-                pass: process.env.EMAIL_APP_PASSWORD
-            }
-        });
-        var mailOptions = {
-            from: 'noreply9745@gmail.com',
-            to: `${newUser.username}`,
+
+        sgMail.setApiKey(process.env.API_KEY)
+
+        const message = {
+            to: `${username}`,
+            from: 'panmonikmm@gmail.com',
             subject: "Please confirm your account",
             html: `<div>
-            <h1>Email Confirmation</h1>
-            <h2>Hello ${newUser.firstName}</h2>
-            <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
-            <a href=${link}>Click here</a>
-            </div>`,
-        };
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            }
-            else {
-                console.log('Email sent:' + info.response);
-            }
-        })
+                    <h1>Email Confirmation</h1>
+                    <h2>Hello ${firstName}</h2>
+                    <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
+                    <a href=${link}>Click here</a>
+                    </div>`
+                    };
+
+            sgMail.send(message).then((response) => console.log('Email sent...')).catch((error) => console.log(error))
+
         res.status(200).send({ message: "Email sent successfully" })
     }
     catch (error) {
         res.status(500).json(error)
     }
-
 })
 
 router.post('/signup/verify-account/:id/:token', async (req, res) => {
@@ -229,3 +220,31 @@ router.post("/reset-password/:id/:token", async (req, res) => {
 export const userRouter = router;
 
 
+
+// var transporter = NodeMailer.createTransport({
+//     service: 'gmail',
+//     auth: {
+//         user: 'noreply9745@gmail.com',
+//         pass: process.env.EMAIL_APP_PASSWORD
+//     }
+// });
+
+// var mailOptions = {
+//     from: 'noreply9745@gmail.com',
+//     to: `${newUser.username}`,
+//     subject: "Please confirm your account",
+//     html: `<div>
+//     <h1>Email Confirmation</h1>
+//     <h2>Hello ${newUser.firstName}</h2>
+//     <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
+//     <a href=${link}>Click here</a>
+//     </div>`,
+// };
+// transporter.sendMail(mailOptions, function (error, info) {
+//     if (error) {
+//         console.log(error);
+//     }
+//     else {
+//         console.log('Email sent:' + info.response);
+//     }
+// })
