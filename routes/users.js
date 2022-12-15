@@ -38,30 +38,31 @@ router.post('/signup', async (req, res) => {
             service: 'gmail',
             auth: {
                 user: 'panmonikmm@gmail.com',
-                pass: process.env.EMAIL_APP_PASSWORD
+                pass: "cfnjszquieurhecj"
             }
         });
-        
+
         var mailOptions = {
             from: 'panmonikmm@gmail.com',
             to: `${newUser.username}`,
             subject: "Please confirm your account",
             html: `<div>
-            <h1>Email Confirmation</h1>
-            <h2>Hello ${newUser.firstName}</h2>
-            <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
-            <a href=${link}>Click here</a>
-            </div>`,
+                    <h1>Email Confirmation</h1>
+                    <h2>Hello ${newUser.firstName}</h2>
+                    <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
+                    <a href=${link}>Click here</a>
+                    </div>`,
         };
-        transporter.sendMail(mailOptions, function (error, info) {
+        
+        await transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
             }
             else {
                 console.log('Email sent:' + info.response);
             }
-        });
-       
+        })
+
         res.status(200).send({ message: "Email sent successfully" })
     }
     catch (error) {

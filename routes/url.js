@@ -16,7 +16,7 @@ const lastDay = `${current.getFullYear()}-${current.getMonth() + 1}-31`;
 
 router.get('/', async(req, res)=>{
     try {
-        const result = await UrlModel.find({})
+        const result = await UrlModel.find({})      
         res.send(result)
     }
     catch (error) {
