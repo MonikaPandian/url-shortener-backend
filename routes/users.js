@@ -34,22 +34,34 @@ router.post('/signup', async (req, res) => {
         const token = jwt.sign(payload, secret, { expiresIn: '15m' });
         const link = `https://url-shortener-frontend-a1d3c9.netlify.app/register/verify/${newUser._id}/${token}`;
 
-        sgMail.setApiKey(process.env.API_KEY)
-
-        const message = {
-            to: `${username}`,
+        var transporter = NodeMailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'panmonikmm@gmail.com',
+                pass: process.env.EMAIL_APP_PASSWORD
+            }
+        });
+        
+        var mailOptions = {
             from: 'panmonikmm@gmail.com',
+            to: `${newUser.username}`,
             subject: "Please confirm your account",
             html: `<div>
-                    <h1>Email Confirmation</h1>
-                    <h2>Hello ${firstName}</h2>
-                    <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
-                    <a href=${link}>Click here</a>
-                    </div>`
-                    };
-
-            sgMail.send(message).then((response) => console.log('Email sent...')).catch((error) => console.log(error))
-
+            <h1>Email Confirmation</h1>
+            <h2>Hello ${newUser.firstName}</h2>
+            <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
+            <a href=${link}>Click here</a>
+            </div>`,
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                console.log('Email sent:' + info.response);
+            }
+        });
+       
         res.status(200).send({ message: "Email sent successfully" })
     }
     catch (error) {
@@ -248,3 +260,20 @@ export const userRouter = router;
 //         console.log('Email sent:' + info.response);
 //     }
 // })
+
+
+// sgMail.setApiKey(process.env.API_KEY)
+
+// const message = {
+//     to: `${username}`,
+//     from: 'panmonikmm@gmail.com',
+//     subject: "Please confirm your account",
+//     html: `<div>
+//             <h1>Email Confirmation</h1>
+//             <h2>Hello ${firstName}</h2>
+//             <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
+//             <a href=${link}>Click here</a>
+//             </div>`
+//             };
+
+//     sgMail.send(message).then((response) => console.log('Email sent...')).catch((error) => console.log(error))

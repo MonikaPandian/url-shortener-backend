@@ -26,4 +26,3 @@ app.use('/', RedirectRoute)
 app.use('/api/url', UrlRoute)
 app.use('/users',userRouter)
 
-// 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
