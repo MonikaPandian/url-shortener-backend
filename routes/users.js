@@ -35,12 +35,12 @@ router.post('/signup', async (req, res) => {
         var transporter = NodeMailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'panmonikmm@gmail.com',
+                user: 'noreply9745@gmail.com',
                 pass: process.env.EMAIL_APP_PASSWORD
             }
         });
         var mailOptions = {
-            from: 'panmonikmm@gmail.com',
+            from: 'noreply9745@gmail.com',
             to: `${newUser.username}`,
             subject: "Please confirm your account",
             html: `<div>

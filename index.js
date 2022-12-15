@@ -26,4 +26,3 @@ app.use('/', RedirectRoute)
 app.use('/api/url', UrlRoute)
 app.use('/users',userRouter)
 
-// # EMAIL_APP_PASSWORD=nrgyzvmtmcrxmpik
