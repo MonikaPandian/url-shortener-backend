@@ -54,7 +54,7 @@ router.post('/signup', async (req, res) => {
                     </div>`,
         };
         
-        await transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
             }
@@ -63,7 +63,6 @@ router.post('/signup', async (req, res) => {
             }
         })
 
-        res.status(200).send({ message: "Email sent",token: token, id:newUser._id })
     }
     catch (error) {
         res.status(500).json(error)
