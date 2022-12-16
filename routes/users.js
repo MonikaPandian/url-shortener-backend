@@ -16,7 +16,7 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ message: "username is already registered" })
     }
 
-    try {
+   
         const salt = await bcrypt.genSalt(10); //bcrypt.gensalt(no of rounds)
 
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -63,10 +63,8 @@ router.post('/signup', async (req, res) => {
             }
         })
 
-    }
-    catch (error) {
-        res.status(500).json(error)
-    }
+    
+   
 })
 
 router.post('/signup/verify-account/:id/:token', async (req, res) => {
