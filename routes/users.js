@@ -3,7 +3,6 @@ import UserModel from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import NodeMailer from 'nodemailer';
-import sgMail from "@sendgrid/mail";
 
 const router = express.Router()
 
@@ -15,8 +14,7 @@ router.post('/signup', async (req, res) => {
     if (isUserExist) {
         return res.status(400).json({ message: "username is already registered" })
     }
-
-   
+    try {    
         const salt = await bcrypt.genSalt(10); //bcrypt.gensalt(no of rounds)
 
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -54,17 +52,12 @@ router.post('/signup', async (req, res) => {
                     </div>`,
         };
         
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            }
-            else {
-                console.log('Email sent:' + info.response);
-            }
-        })
+       transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));                   
 
-    
-   
+        res.send({message: "Email sent successfully"})           
+    }  catch (error) {
+        res.status(400).json({ message: "Internal server error" })
+    }    
 })
 
 router.post('/signup/verify-account/:id/:token', async (req, res) => {
