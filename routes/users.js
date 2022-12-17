@@ -56,7 +56,7 @@ router.post('/signup', async (req, res) => {
 
         res.send({ message: "Email sent successfully" })
     } catch (error) {
-        res.status(400).json({ message: "Internal server error" })
+        res.status(500).json({ message: "Internal server error" })
     }
 })
 
@@ -90,49 +90,53 @@ router.post('/login', async (req, res) => {
         return res.status(400).json({ message: "user not exists!!!" })
     }
 
-    //check whether the account is active      
-    if (isUserExist.status !== "active") {
-        const secret = process.env.SECRET_KEY + isUserExist.password
-        const payload = {
-            email: isUserExist.username,
-            id: isUserExist._id
-        }
-
-        //User exist and now create a one time link valid for 15 minutes
-        const token = jwt.sign(payload, secret, { expiresIn: '15m' });
-        const link = `https://url-shortener-frontend-a1d3c9.netlify.app/register/verify/${isUserExist._id}/${token}`;
-        var transporter = NodeMailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'panmonikmm@gmail.com',
-                pass: process.env.EMAIL_APP_PASSWORD
+    try {
+        //check whether the account is active      
+        if (isUserExist.status !== "active") {
+            const secret = process.env.SECRET_KEY + isUserExist.password
+            const payload = {
+                email: isUserExist.username,
+                id: isUserExist._id
             }
-        });
-        var mailOptions = {
-            from: 'panmonikmm@gmail.com',
-            to: `${isUserExist.username}`,
-            subject: "Please confirm your account",
-            html: `<div>
+
+            //User exist and now create a one time link valid for 15 minutes
+            const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+            const link = `https://url-shortener-frontend-a1d3c9.netlify.app/register/verify/${isUserExist._id}/${token}`;
+            var transporter = NodeMailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'panmonikmm@gmail.com',
+                    pass: process.env.EMAIL_APP_PASSWORD
+                }
+            });
+            var mailOptions = {
+                from: 'panmonikmm@gmail.com',
+                to: `${isUserExist.username}`,
+                subject: "Please confirm your account",
+                html: `<div>
             <h1>Email Confirmation</h1>
             <h2>Hello ${isUserExist.firstName}</h2>
             <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
             <a href=${link}>Click here</a>
             </div>`,
-        };
-        const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));
+            };
+            const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));
 
-        return res.send({ message: "Account is not activated. Email sent successfully" })
+            return res.send({ message: "Account is not activated. Email sent successfully" })
+        }
+
+        const storedPassword = isUserExist.password
+        const isPasswordMatch = await bcrypt.compare(password, storedPassword)
+
+        if (!isPasswordMatch) {
+            return res.status(400).send({ message: "Invalid credentials" })
+        }
+
+        const token = jwt.sign({ id: isUserExist._id }, process.env.SECRET_KEY)
+        res.send({ message: "Successful login", token: token, username: username, id: isUserExist._id, firstName: isUserExist.firstName, lastName: isUserExist.lastName })
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" })
     }
-
-    const storedPassword = isUserExist.password
-    const isPasswordMatch = await bcrypt.compare(password, storedPassword)
-
-    if (!isPasswordMatch) {
-        return res.status(400).send({ message: "Invalid credentials" })
-    }
-
-    const token = jwt.sign({ id: isUserExist._id }, process.env.SECRET_KEY)
-    res.send({ message: "Successful login", token: token, username: username, id: isUserExist._id, firstName: isUserExist.firstName, lastName: isUserExist.lastName })
 })
 
 //forgot-password send-email
@@ -149,36 +153,40 @@ router.post("/forgot-password", async (req, res) => {
         return res.status(400).json({ message: "Account is not activated" })
     }
 
-    //User exist and now create a one time link valid for 15 minutes
-    const secret = process.env.SECRET_KEY + isUserExist.password;
+    try {
+        //User exist and now create a one time link valid for 15 minutes
+        const secret = process.env.SECRET_KEY + isUserExist.password;
 
-    const payload = {
-        email: isUserExist.username,
-        id: isUserExist._id
-    }
-
-    const token = jwt.sign(payload, secret, { expiresIn: '15m' })
-    const link = `https://url-shortener-frontend-a1d3c9.netlify.app/reset-password/${isUserExist._id}/${token}`;
-
-    var transporter = NodeMailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'panmonikmm@gmail.com',
-            pass: process.env.EMAIL_APP_PASSWORD
+        const payload = {
+            email: isUserExist.username,
+            id: isUserExist._id
         }
-    });
 
-    var mailOptions = {
-        from: 'panmonikmm@gmail.com',
-        to: `${isUserExist.username}`,
-        subject: 'Tiny URL Password reset link',
-        html: `We have received your request for reset password. Click this link to reset your password.<br>
+        const token = jwt.sign(payload, secret, { expiresIn: '15m' })
+        const link = `https://url-shortener-frontend-a1d3c9.netlify.app/reset-password/${isUserExist._id}/${token}`;
+
+        var transporter = NodeMailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'panmonikmm@gmail.com',
+                pass: process.env.EMAIL_APP_PASSWORD
+            }
+        });
+
+        var mailOptions = {
+            from: 'panmonikmm@gmail.com',
+            to: `${isUserExist.username}`,
+            subject: 'Tiny URL Password reset link',
+            html: `We have received your request for reset password. Click this link to reset your password.<br>
               <a style="font-size:20px" href = ${link}>Click Here</a><br>
               <p>This link is valid for 15 minutes from your request initiation for password recovery.</p>`
-    };
+        };
 
-    const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));
-    res.send({ message: "success" });
+        const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));
+        res.send({ message: "success" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" })
+    }
 })
 
 //reset password
@@ -191,12 +199,17 @@ router.post("/reset-password/:id/:token", async (req, res) => {
         res.status(400).send({ message: "User not exists!!" })
         return;
     }
-    const secret = process.env.SECRET_KEY + userFromDB.password;
-    const verify = jwt.verify(token, secret)
-    const salt = await bcrypt.genSalt(10);
-    const encryptedPassword = await bcrypt.hash(password, salt)
-    const updatePassword = await userFromDB.updateOne({ password: encryptedPassword })
-    res.status(200).send({ message: "Password updated" })
+
+    try {
+        const secret = process.env.SECRET_KEY + userFromDB.password;
+        const verify = jwt.verify(token, secret)
+        const salt = await bcrypt.genSalt(10);
+        const encryptedPassword = await bcrypt.hash(password, salt)
+        const updatePassword = await userFromDB.updateOne({ password: encryptedPassword })
+        res.status(200).send({ message: "Password updated" })
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" })
+    }
 })
 
 export const userRouter = router;
