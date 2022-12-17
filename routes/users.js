@@ -14,7 +14,7 @@ router.post('/signup', async (req, res) => {
     if (isUserExist) {
         return res.status(400).json({ message: "username is already registered" })
     }
-    try {    
+    try {
         const salt = await bcrypt.genSalt(10); //bcrypt.gensalt(no of rounds)
 
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -51,13 +51,13 @@ router.post('/signup', async (req, res) => {
                     <a href=${link}>Click here</a>
                     </div>`,
         };
-        
-       const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));                   
 
-        res.send({message: "Email sent successfully"})           
-    }  catch (error) {
+        const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));
+
+        res.send({ message: "Email sent successfully" })
+    } catch (error) {
         res.status(400).json({ message: "Internal server error" })
-    }    
+    }
 })
 
 router.post('/signup/verify-account/:id/:token', async (req, res) => {
@@ -118,9 +118,9 @@ router.post('/login', async (req, res) => {
             <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
             <a href=${link}>Click here</a>
             </div>`,
-        };        
-        const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));                   
-                          
+        };
+        const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));
+
         return res.send({ message: "Account is not activated. Email sent successfully" })
     }
 
@@ -158,7 +158,7 @@ router.post("/forgot-password", async (req, res) => {
     }
 
     const token = jwt.sign(payload, secret, { expiresIn: '15m' })
-    const link = `http://localhost:3000/reset-password/${isUserExist._id}/${token}`;
+    const link = `https://url-shortener-frontend-a1d3c9.netlify.app/reset-password/${isUserExist._id}/${token}`;
 
     var transporter = NodeMailer.createTransport({
         service: 'gmail',
@@ -177,7 +177,7 @@ router.post("/forgot-password", async (req, res) => {
               <p>This link is valid for 15 minutes from your request initiation for password recovery.</p>`
     };
 
-    const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));                   
+    const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));
     res.send({ message: "success" });
 })
 
@@ -185,26 +185,18 @@ router.post("/forgot-password", async (req, res) => {
 router.post("/reset-password/:id/:token", async (req, res) => {
     const { id, token } = req.params;
     const { password } = req.body;
-
     //check if this id exist in database
     const userFromDB = await UserModel.findOne({ _id: id })
-
     if (!userFromDB) {
         res.status(400).send({ message: "User not exists!!" })
         return;
     }
     const secret = process.env.SECRET_KEY + userFromDB.password;
-    try {
-        const verify = jwt.verify(token, secret)
-        const salt = await bcrypt.genSalt(10);
-        const encryptedPassword = await bcrypt.hash(password, salt)
-        await UserModel.updateOne({ password: encryptedPassword })
-        res.status(200).send({ message: "Password updated" })
-    }
-    catch (error) {
-        res.status(400).send({ message: "Token expired" })
-
-    }
+    const verify = jwt.verify(token, secret)
+    const salt = await bcrypt.genSalt(10);
+    const encryptedPassword = await bcrypt.hash(password, salt)
+    const updatePassword = await userFromDB.updateOne({ password: encryptedPassword })
+    res.status(200).send({ message: "Password updated" })
 })
 
 export const userRouter = router;
