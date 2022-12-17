@@ -104,12 +104,12 @@ router.post('/login', async (req, res) => {
         var transporter = NodeMailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'noreply9745@gmail.com',
+                user: 'panmonikmm@gmail.com',
                 pass: process.env.EMAIL_APP_PASSWORD
             }
         });
         var mailOptions = {
-            from: 'noreply9745@gmail.com',
+            from: 'panmonikmm@gmail.com',
             to: `${isUserExist.username}`,
             subject: "Please confirm your account",
             html: `<div>
@@ -163,13 +163,13 @@ router.post("/forgot-password", async (req, res) => {
     var transporter = NodeMailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'noreply9745@gmail.com',
+            user: 'panmonikmm@gmail.com',
             pass: process.env.EMAIL_APP_PASSWORD
         }
     });
 
     var mailOptions = {
-        from: 'noreply9745@gmail.com',
+        from: 'panmonikmm@gmail.com',
         to: `${isUserExist.username}`,
         subject: 'Tiny URL Password reset link',
         html: `We have received your request for reset password. Click this link to reset your password.<br>
