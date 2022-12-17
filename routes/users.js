@@ -118,15 +118,9 @@ router.post('/login', async (req, res) => {
             <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
             <a href=${link}>Click here</a>
             </div>`,
-        };
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            }
-            else {
-                console.log('Email sent:' + info.response);
-            }
-        })
+        };        
+        const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));                   
+                          
         return res.send({ message: "Account is not activated. Email sent successfully" })
     }
 
@@ -183,14 +177,7 @@ router.post("/forgot-password", async (req, res) => {
               <p>This link is valid for 15 minutes from your request initiation for password recovery.</p>`
     };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        }
-        else {
-            console.log('Email sent:' + info.response);
-        }
-    })
+    const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));                   
     res.send({ message: "success" });
 })
 
@@ -224,47 +211,3 @@ export const userRouter = router;
 
 
 
-// var transporter = NodeMailer.createTransport({
-//     service: 'gmail',
-//     auth: {
-//         user: 'noreply9745@gmail.com',
-//         pass: process.env.EMAIL_APP_PASSWORD
-//     }
-// });
-
-// var mailOptions = {
-//     from: 'noreply9745@gmail.com',
-//     to: `${newUser.username}`,
-//     subject: "Please confirm your account",
-//     html: `<div>
-//     <h1>Email Confirmation</h1>
-//     <h2>Hello ${newUser.firstName}</h2>
-//     <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
-//     <a href=${link}>Click here</a>
-//     </div>`,
-// };
-// transporter.sendMail(mailOptions, function (error, info) {
-//     if (error) {
-//         console.log(error);
-//     }
-//     else {
-//         console.log('Email sent:' + info.response);
-//     }
-// })
-
-
-// sgMail.setApiKey(process.env.API_KEY)
-
-// const message = {
-//     to: `${username}`,
-//     from: 'panmonikmm@gmail.com',
-//     subject: "Please confirm your account",
-//     html: `<div>
-//             <h1>Email Confirmation</h1>
-//             <h2>Hello ${firstName}</h2>
-//             <p>Thank you for subscribing. Please confirm your email by clicking on the following link. This link is valid for 15 minutes.</p>
-//             <a href=${link}>Click here</a>
-//             </div>`
-//             };
-
-//     sgMail.send(message).then((response) => console.log('Email sent...')).catch((error) => console.log(error))
