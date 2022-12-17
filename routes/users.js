@@ -52,7 +52,7 @@ router.post('/signup', async (req, res) => {
                     </div>`,
         };
         
-       transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));                   
+       const message = await transporter.sendMail(mailOptions).then((response) => console.log(response)).catch((error) => console.log(error));                   
 
         res.send({message: "Email sent successfully"})           
     }  catch (error) {
