@@ -5,7 +5,7 @@ import UrlModel from "../models/urlModel.js";
 
 const router = express.Router()
 
-const baseUrl = 'https://url-shortener-backend-silk.vercel.app'
+const baseUrl = 'https://url-shortener-backend-five.vercel.app'
 
 const current = new Date()
 const today = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
